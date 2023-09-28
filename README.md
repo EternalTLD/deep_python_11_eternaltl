@@ -1,10 +1,9 @@
 # deep_python_11
 
-# 01 Coverage
 <body class="indexfile">
 <header>
     <div class="content">
-        <h1>Coverage report:
+        <h1>01 coverage report:
             <span class="pc_cov">97%</span>
         </h1>
     </div>
