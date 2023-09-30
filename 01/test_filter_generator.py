@@ -67,7 +67,7 @@ def test_word_match():
 
     search_words = ["tes", "testinggg"]
     result = list(filter_generator("test.txt", search_words))
-    assert result == []
+    assert not result
     os.remove("test.txt")
 
 
