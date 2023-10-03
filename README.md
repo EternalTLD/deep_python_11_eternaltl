@@ -3,8 +3,8 @@
 <body class="indexfile">
 <header>
     <div class="content">
-        <h1>01 coverage report:
-            <span class="pc_cov">97%</span>
+        <h1>Coverage report:
+            <span class="pc_cov">99%</span>
         </h1>
     </div>
 </header>
@@ -22,40 +22,40 @@
         <tbody>
             <tr class="file">
                 <td class="name left"><a href="filter_generator_py.html">filter_generator.py</a></td>
-                <td>18</td>
+                <td>20</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 18">100%</td>
+                <td class="right" data-ratio="20 20">100%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="predict_message_mood_py.html">predict_message_mood.py</a></td>
                 <td>22</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 22">82%</td>
+                <td class="right" data-ratio="20 22">91%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_filter_generator_py.html">test_filter_generator.py</a></td>
-                <td>62</td>
+                <td>79</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="62 62">100%</td>
+                <td class="right" data-ratio="79 79">100%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_predict_message_mood_py.html">test_predict_message_mood.py</a></td>
-                <td>48</td>
+                <td>55</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="48 48">100%</td>
+                <td class="right" data-ratio="55 55">100%</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
-                <td>150</td>
-                <td>4</td>
+                <td>176</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="146 150">97%</td>
+                <td class="right" data-ratio="174 176">99%</td>
             </tr>
         </tfoot>
     </table>

@@ -30,12 +30,25 @@ def test_bad_predict_message_mood(mocker, prediction_value):
     assert predict_message_mood("test", model) == "неуд"
 
 
-def test_custom_thresholds(mocker):
-    mocker.patch("predict_message_mood.SomeModel.predict", return_value=0.805)
+@pytest.mark.parametrize(
+    "bad_thresholds, good_thresholds, prediction_value, result",
+    [(0.5, 0.51, 0.505, "норм"), (0.1, 0.2, 0.05, "неуд"), (0.8, 0.9, 0.99, "отл")],
+)
+def test_custom_thresholds(
+    mocker, bad_thresholds, good_thresholds, prediction_value, result
+):
+    mocker.patch(
+        "predict_message_mood.SomeModel.predict", return_value=prediction_value
+    )
     model = SomeModel()
     assert (
-        predict_message_mood("test", model, bad_thresholds=0.8, good_thresholds=0.81)
-        == "норм"
+        predict_message_mood(
+            "test",
+            model,
+            bad_thresholds=bad_thresholds,
+            good_thresholds=good_thresholds,
+        )
+        == result
     )
 
 
@@ -89,3 +102,11 @@ def test_bad_thresholds_greater_then_good_thresholds():
     with pytest.raises(ValueError) as exception:
         predict_message_mood("test", model, bad_thresholds=0.8, good_thresholds=0.3)
     assert "Good thresholds must be greater then bad thresholds" in str(exception.value)
+
+
+@pytest.mark.parametrize("predict_input", [1, 0.1, (1, 2, 3), [1, 2, 3], {"1": 1}])
+def test_some_model_predict_input(predict_input):
+    model = SomeModel()
+    with pytest.raises(TypeError) as exception:
+        model.predict(predict_input)
+    assert "Message must be str" in str(exception.value)

@@ -3,10 +3,10 @@ import random
 
 class SomeModel:
     def predict(self, message: str) -> float:
-        if message:
-            prediction = random.uniform(0, 1)
-            return prediction
-        return None
+        if not isinstance(message, str):
+            raise TypeError("Message must be str")
+        prediction = random.uniform(0, 1)
+        return prediction
 
 
 def predict_message_mood(

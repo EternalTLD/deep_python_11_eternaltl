@@ -86,3 +86,21 @@ def test_file_or_file_name_type(file_or_file_name):
     assert "Variable 'file_or_file_name' must be string or file object" in str(
         exception.value
     )
+
+
+def test_many_filters_in_one_line():
+    test_data = ["word1 test1 line1\n", "word2 test2\n", "word3 test3 word2\n"]
+    setup_test_file(test_data)
+    search_words = ["word1", "test1", "line1"]
+    result = list(filter_generator("test.txt", search_words))
+    assert result == ["word1 test1 line1"]
+    os.remove("test.txt")
+
+
+def test_word_match_line():
+    test_data = ["word1\n", "word2 test2\n", "word3 test3 word2\n"]
+    setup_test_file(test_data)
+    search_words = ["word1"]
+    result = list(filter_generator("test.txt", search_words))
+    assert result == ["word1"]
+    os.remove("test.txt")
