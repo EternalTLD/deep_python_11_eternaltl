@@ -3,7 +3,7 @@
 <body class="indexfile">
 <header>
     <div class="content">
-        <h1>Coverage report:
+        <h1>01 | Coverage report:
             <span class="pc_cov">99%</span>
         </h1>
     </div>
