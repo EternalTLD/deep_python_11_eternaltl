@@ -53,4 +53,4 @@ class CustomList(list):
         return sum(self) - sum(other)
 
     def __str__(self) -> str:
-        return f"CustomList({list(self)}), sum - {str(sum(self))}"
+        return f"CustomList({list(self)}), sum - {sum(self)}"
