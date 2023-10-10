@@ -5,7 +5,6 @@ class CardType:
     ALLOWED_TYPES = ("VISA", "MASTERCARD", "MIR")
 
     def __set_name__(self, owner, name):
-        self.name = name
         self._name = f"_{name}"
 
     def __get__(self, obj, objtype):
@@ -21,7 +20,6 @@ class CardType:
 
 class CardNumber:
     def __set_name__(self, owner, name):
-        self.name = name
         self._name = f"_{name}"
 
     def __get__(self, obj, objtype):
@@ -38,7 +36,6 @@ class CardNumber:
 
 class ExpirationDate:
     def __set_name__(self, owner, name):
-        self.name = name
         self._name = f"_{name}"
 
     def __get__(self, obj, objtype):
