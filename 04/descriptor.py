@@ -30,7 +30,6 @@ class CardNumber:
             raise TypeError("Card number must be str")
         if len(value) != 16 or not value.isdigit():
             raise ValueError("Card number must consist of exactly 16 digits")
-
         return setattr(obj, self._name, value)
 
 
