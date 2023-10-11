@@ -15,12 +15,12 @@ def filter_generator(file_or_file_name: str | IOBase, search_words: list[str]) -
 
 
 def process_file_object(file_object, search_words):
-    processed_lines = set()
     for line in file_object:
+        current_line = ""
         line_words = line.lower().strip().split()
         for word in search_words:
-            if line in processed_lines:
+            if line == current_line:
                 continue
             if word.lower() in line_words:
+                current_line = line
                 yield line.strip()
-                processed_lines.add(line)

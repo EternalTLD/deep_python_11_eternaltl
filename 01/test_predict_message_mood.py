@@ -1,3 +1,4 @@
+from unittest.mock import call
 import pytest
 
 from predict_message_mood import SomeModel, predict_message_mood
@@ -5,29 +6,32 @@ from predict_message_mood import SomeModel, predict_message_mood
 
 @pytest.mark.parametrize("prediction_value", [0.3, 0.5, 0.8])
 def test_normal_predict_message_mood(mocker, prediction_value):
-    mocker.patch(
+    mock_predict = mocker.patch(
         "predict_message_mood.SomeModel.predict", return_value=prediction_value
     )
     model = SomeModel()
     assert predict_message_mood("test", model) == "норм"
+    assert mock_predict.call_args_list == [call("test")]
 
 
 @pytest.mark.parametrize("prediction_value", [0.81, 0.9, 0.99])
 def test_good_predict_message_mood(mocker, prediction_value):
-    mocker.patch(
+    mock_predict = mocker.patch(
         "predict_message_mood.SomeModel.predict", return_value=prediction_value
     )
     model = SomeModel()
-    assert predict_message_mood("test", model) == "отл"
+    assert predict_message_mood("somestring", model) == "отл"
+    assert mock_predict.call_args_list == [call("somestring")]
 
 
 @pytest.mark.parametrize("prediction_value", [0.29, 0.1, 0.01])
 def test_bad_predict_message_mood(mocker, prediction_value):
-    mocker.patch(
+    mock_predict = mocker.patch(
         "predict_message_mood.SomeModel.predict", return_value=prediction_value
     )
     model = SomeModel()
-    assert predict_message_mood("test", model) == "неуд"
+    assert predict_message_mood("str", model) == "неуд"
+    assert mock_predict.call_args_list == [call("str")]
 
 
 @pytest.mark.parametrize(
@@ -37,19 +41,20 @@ def test_bad_predict_message_mood(mocker, prediction_value):
 def test_custom_thresholds(
     mocker, bad_thresholds, good_thresholds, prediction_value, result
 ):
-    mocker.patch(
+    mock_predict = mocker.patch(
         "predict_message_mood.SomeModel.predict", return_value=prediction_value
     )
     model = SomeModel()
     assert (
         predict_message_mood(
-            "test",
+            "TEST",
             model,
             bad_thresholds=bad_thresholds,
             good_thresholds=good_thresholds,
         )
         == result
     )
+    assert mock_predict.call_args_list == [call("TEST")]
 
 
 @pytest.mark.parametrize("message", [1, 0.1, (1, 2, 3), [1, 2, 3], {"1": 1}])

@@ -104,3 +104,36 @@ def test_word_match_line():
     result = list(filter_generator("test.txt", search_words))
     assert result == ["word1"]
     os.remove("test.txt")
+
+
+def test_many_same_filters_in_one_line():
+    test_data = ["word1 test1 word1 line1 word1\n"]
+    setup_test_file(test_data)
+    search_words = ["word1"]
+    result = list(filter_generator("test.txt", search_words))
+    assert result == ["word1 test1 word1 line1 word1"]
+    os.remove("test.txt")
+
+
+def test_many_same_lines_in_one_file():
+    test_data = [
+        "some same line\n",
+        "some line1\n",
+        "some same line\n",
+        "another same line\n",
+        "another same line\n",
+        "some line2\n",
+        "another same line\n",
+    ]
+    setup_test_file(test_data)
+    search_words = ["same", "line"]
+    result = list(filter_generator("test.txt", search_words))
+    expected_result = [
+        "some same line",
+        "some same line",
+        "another same line",
+        "another same line",
+        "another same line",
+    ]
+    assert result == expected_result
+    os.remove("test.txt")
