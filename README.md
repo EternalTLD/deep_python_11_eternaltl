@@ -36,26 +36,26 @@
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_filter_generator_py.html">test_filter_generator.py</a></td>
-                <td>79</td>
+                <td>94</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="79 79">100%</td>
+                <td class="right" data-ratio="94 94">100%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_predict_message_mood_py.html">test_predict_message_mood.py</a></td>
-                <td>55</td>
+                <td>60</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="55 55">100%</td>
+                <td class="right" data-ratio="60 60">100%</td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
-                <td>176</td>
+                <td>196</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="174 176">99%</td>
+                <td class="right" data-ratio="194 196">99%</td>
             </tr>
         </tfoot>
     </table>
