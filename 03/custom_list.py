@@ -49,8 +49,23 @@ class CustomList(list):
             result_list.append(element2 - element1)
         return CustomList(result_list)
 
-    def __cmp__(self, other):
-        return sum(self) - sum(other)
+    def __eq__(self, other):
+        return sum(self) == sum(other)
+
+    def __ne__(self, other):
+        return sum(self) != sum(other)
+
+    def __lt__(self, other):
+        return sum(self) < sum(other)
+
+    def __le__(self, other):
+        return sum(self) <= sum(other)
+
+    def __gt__(self, other):
+        return sum(self) > sum(other)
+
+    def __ge__(self, other):
+        return sum(self) >= sum(other)
 
     def __str__(self) -> str:
         return f"CustomList({list(self)}), sum - {sum(self)}"

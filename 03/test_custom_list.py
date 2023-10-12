@@ -86,9 +86,15 @@ def test_list_immutability():
     assert list3 == CustomList([-3, -3, -3, -10])
 
 
-def test_comparison_operators():
-    list1 = CustomList([1, 2, 3])
-    list2 = CustomList([4, 5, 6])
+@pytest.mark.parametrize(
+    "list1, list2",
+    [
+        (CustomList([1, 2, 3]), CustomList([4, 5, 6])),
+        (CustomList([4, 5]) + CustomList([6]), CustomList([5, 5, 6])),
+        (CustomList([9, 9]) - CustomList([7]), CustomList([4]) + CustomList([4, 5])),
+    ],
+)
+def test_comparison_operators_not_equal_lists(list1, list2):
     assert (list1 == list2) is False
     assert (list1 != list2) is True
     assert (list2 > list1) is True
@@ -100,8 +106,17 @@ def test_comparison_operators():
     assert (list2 >= list1) is True
     assert (list1 >= list2) is False
 
-    list1 = CustomList([1, 2, 3])
-    list2 = CustomList([1, 2, 3])
+
+@pytest.mark.parametrize(
+    "list1, list2",
+    [
+        (CustomList([1, 2, 3]), CustomList([1, 2, 3])),
+        (CustomList([2, 4, 7]), CustomList([3, 9, 1])),
+        (CustomList([2, 4]) + CustomList([7]), CustomList([3, 9, 1])),
+        (CustomList([9, 9]) - CustomList([7]), CustomList([3]) + CustomList([4, 4])),
+    ],
+)
+def test_comparison_operators_equal_lists(list1, list2):
     assert (list1 == list2) is True
     assert (list1 != list2) is False
     assert (list2 > list1) is False
