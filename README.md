@@ -90,7 +90,7 @@
             </tr>
             <tr class="file">
                 <td class="name left"><a href="parse_json_py.html">parse_json.py</a></td>
-                <td>10</td>
+                <td>18</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="10 10">100%</td>
@@ -104,7 +104,7 @@
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_parse_json_py.html">test_parse_json.py</a></td>
-                <td>114</td>
+                <td>121</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="114 114">100%</td>
@@ -113,7 +113,7 @@
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
-                <td>167</td>
+                <td>182</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="167 167">100%</td>
