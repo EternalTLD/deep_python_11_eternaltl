@@ -22,12 +22,21 @@ def test_class_attr():
     with pytest.raises(AttributeError):
         assert test_object.attr
 
+    assert CustomMetaTest.custom_attr == 10
+    with pytest.raises(AttributeError):
+        assert CustomMetaTest.attr
+
 
 def test_object_attr():
     test_object = CustomMetaTest()
     assert test_object.custom_value == "value"
     with pytest.raises(AttributeError):
         assert test_object.value
+
+    with pytest.raises(AttributeError):
+        assert CustomMetaTest.custom_value == "value"
+    with pytest.raises(AttributeError):
+        assert CustomMetaTest.value
 
 
 def test_method():
@@ -45,7 +54,10 @@ def test_magic_method():
         assert test_object.custom___str__()
 
     assert hasattr(test_object, "__init__")
-    assert not hasattr(test_object, "custom__init__")
+    assert not hasattr(test_object, "custom___init__")
+
+    assert hasattr(CustomMetaTest, "__new__")
+    assert not hasattr(CustomMetaTest, "custom___new__")
 
 
 def test_dynamic_added_attr():
@@ -54,3 +66,8 @@ def test_dynamic_added_attr():
     assert test_object.custom_dynamic == "dynamic"
     with pytest.raises(AttributeError):
         assert test_object.dynamic
+
+    CustomMetaTest.dynamic_cls = "dynamic_cls"
+    assert CustomMetaTest.dynamic_cls == "dynamic_cls"
+    with pytest.raises(AttributeError):
+        assert CustomMetaTest.custom_dynamic_cls

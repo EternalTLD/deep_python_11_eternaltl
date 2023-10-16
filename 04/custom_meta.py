@@ -9,7 +9,10 @@ class CustomMeta(type):
                 classdict[f"custom_{attr}"] = classdict.pop(attr)
 
         def __setattr__(obj, name, value):
-            obj.__dict__[f"custom_{name}"] = value
+            if not re.match(magic_method_pattern, name):
+                obj.__dict__[f"custom_{name}"] = value
+            else:
+                obj.__dict__[name] = value
 
         classdict["__setattr__"] = __setattr__
 
