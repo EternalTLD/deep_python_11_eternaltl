@@ -1,51 +1,74 @@
+import re
 import socket
 import threading
 from queue import Queue
-import time
+import requests
+from bs4 import BeautifulSoup
+from collections import Counter
+import json
+import string
 
 
 class Server:
+    cnt = 0
 
-    def __init__(self, workers_number=1, host='127.0.0.1', port=2000) -> None:
+    def __init__(self, workers_number=12, most_common_words_number=7, host='127.0.0.1', port=3000) -> None:
         self.host = host
         self.port = port
         self.workers_number = workers_number
-        self.queue = Queue()
+        self.most_common_words_number = most_common_words_number
+        self.clients_queue = Queue()
+
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((self.host, self.port))
-        self.res_queue = Queue()
 
     def start(self):
-        self.socket.listen(5)
-        client_socket, address = self.socket.accept()
-        for i in range(self.workers_number):
-            worker = threading.Thread(target=self.proccess_url, name=f'Worker {i}')
-            worker.start()
-        resper = threading.Thread(target=self.send_resp, name="resp")
-        resper.start()
-        listener = threading.Thread(target=self.listen_client, args=(client_socket, address), name="Listener")
-        listener.start()
+        self.socket.listen()
+        master = threading.Thread(target=self.listen_client, name="Master")
+        master.start()
+        workers = [
+            threading.Thread(target=self.proccess_url, name=f'Worker {i+1}')
+            for i in range(self.workers_number)
+            ]
 
-    def listen_client(self, client_socket, addres):
+        for worker in workers:
+            worker.start()
+        
+        for worker in workers:
+            worker.join()
+
+    def listen_client(self):
         while True:
-            client_data = client_socket.recv(4096)
-            if client_data:
-                sep_data = client_data.decode().split('\n')
-                for i in range(len(sep_data)):
-                    if sep_data[i] != '':
-                        self.queue.put(sep_data[i])
+            try:
+                client_socket, _ = self.socket.accept()
+                self.clients_queue.put(client_socket)
+            except Exception:
+                continue
 
     def proccess_url(self):
         while True:
-            th = threading.current_thread()
-            url = self.queue.get()
-            resp = f"SERVER proccessed {url} TH - {th.name}"
-            self.res_queue.put(resp)
+            client_socket = self.clients_queue.get()
+            url = client_socket.recv(4096).decode('utf-8')
+            data = self.parse_html(url)
+            with threading.Lock():
+                self.cnt += 1
+            
+            client_socket.send(data.encode('utf-8'))
 
-    def send_resp(self):
-        while True:
-            resp = self.res_queue.get()
-            print(resp)
+    def parse_html(self, url):
+        response = requests.get(url)
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
+        page_text = soup.get_text().strip().translate(str.maketrans('', '', string.punctuation)).split()
+        print(page_text)
+        most_common_words = Counter(page_text).most_common(self.most_common_words_number)
+        most_common_words_dict = {}
+        for (word, counter) in most_common_words:
+            most_common_words_dict[word] = counter
+        most_common_words_json = json.dumps(most_common_words_dict)
+        return most_common_words_json
+
 
 if __name__ == "__main__":
     server = Server()
