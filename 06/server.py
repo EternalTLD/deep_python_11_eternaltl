@@ -1,18 +1,19 @@
 import re
 import socket
 import threading
+import json
+from collections import Counter
 from queue import Queue
 import requests
 from bs4 import BeautifulSoup
-from collections import Counter
-import json
-import string
 
 
 class Server:
-    cnt = 0
+    count_urls = 0
 
-    def __init__(self, workers_number=12, most_common_words_number=7, host='127.0.0.1', port=3000) -> None:
+    def __init__(
+        self, workers_number, most_common_words_number, host="127.0.0.1", port=3000
+    ) -> None:
         self.host = host
         self.port = port
         self.workers_number = workers_number
@@ -28,13 +29,13 @@ class Server:
         master = threading.Thread(target=self.listen_client, name="Master")
         master.start()
         workers = [
-            threading.Thread(target=self.proccess_url, name=f'Worker {i+1}')
+            threading.Thread(target=self.proccess_url, name=f"Worker {i+1}")
             for i in range(self.workers_number)
-            ]
+        ]
 
         for worker in workers:
             worker.start()
-        
+
         for worker in workers:
             worker.join()
 
@@ -49,27 +50,30 @@ class Server:
     def proccess_url(self):
         while True:
             client_socket = self.clients_queue.get()
-            url = client_socket.recv(4096).decode('utf-8')
+            url = client_socket.recv(4096).decode("utf-8")
             data = self.parse_html(url)
+            client_socket.send(data.encode("utf-8"))
+
             with threading.Lock():
-                self.cnt += 1
-            
-            client_socket.send(data.encode('utf-8'))
+                self.count_urls += 1
+                print(f"Proccessed {self.count_urls} urls.")
 
     def parse_html(self, url):
         response = requests.get(url)
         html = response.text
-        soup = BeautifulSoup(html, 'html.parser')
-        page_text = soup.get_text().strip().translate(str.maketrans('', '', string.punctuation)).split()
-        print(page_text)
-        most_common_words = Counter(page_text).most_common(self.most_common_words_number)
+        soup = BeautifulSoup(html, "html.parser")
+        page_text = soup.get_text().lower()
+        words = re.findall(r'\b[А-Яа-яA-Za-z]+\b', page_text)
+        most_common_words = Counter(words).most_common(
+            self.most_common_words_number
+        )
         most_common_words_dict = {}
-        for (word, counter) in most_common_words:
+        for word, counter in most_common_words:
             most_common_words_dict[word] = counter
         most_common_words_json = json.dumps(most_common_words_dict)
         return most_common_words_json
 
 
 if __name__ == "__main__":
-    server = Server()
+    server = Server(50, 7)
     server.start()
