@@ -1,6 +1,6 @@
 import socket
 import threading
-from queue import Queue
+import queue
 import json
 
 
@@ -10,11 +10,12 @@ class Client:
         self.file = file
         self.host = host
         self.port = port
-        self.url_queue = Queue()
+        self.url_queue = queue.Queue()
+        self.disconnect = False
 
     def start(self):
         threads = [
-            threading.Thread(target=self.send_urls, name=f"Thread - {i+1}")
+            threading.Thread(target=self.send_url_and_receive_data, name=f"Thread - {i+1}")
             for i in range(self.threads_number)
         ]
 
@@ -26,30 +27,47 @@ class Client:
         for thread in threads:
             thread.join()
 
-    def send_urls(self):
+        self.shutdown_server()
+
+    def send_url_and_receive_data(self):
         while True:
-            url = self.url_queue.get()
-            thread = threading.current_thread()
+            try:
+                url = self.url_queue.get(timeout=1)
+            except queue.Empty:
+                continue
+
             if url is None:
                 self.url_queue.put(None)
-                print(f"{thread.name} is stopped")
                 break
+            
+            client_socket = None
+            try:
+                client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                client_socket.connect((self.host, self.port))
+                client_socket.send(url.encode("utf-8"))
 
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect((self.host, self.port))
-            client_socket.send(url.encode("utf-8"))
-
-            data = json.loads(client_socket.recv(4096).decode("utf-8"))
-            print(data)
-            client_socket.close()
+                data = json.loads(client_socket.recv(4096).decode("utf-8"))
+                print(f"{url}: {data}")
+            except (socket.error, json.JSONDecodeError) as e:
+                print(f"Error in thread - {threading.current_thread().name}: {e}")
+                continue
+            finally:
+                if client_socket:
+                    client_socket.close()
 
     def fetch_urls(self):
         with open(file=self.file, encoding="utf-8") as file_object:
             for url in file_object:
                 self.url_queue.put(url.strip())
-            self.url_queue.put(None)
+        self.url_queue.put(None)
+
+    def shutdown_server(self):
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_socket.connect((self.host, self.port))
+        client_socket.send("SHUTDOWN".encode("utf-8"))
+        client_socket.close()
 
 
 if __name__ == "__main__":
-    client = Client(10, "06/test.txt")
+    client = Client(20, "06/urls.txt")
     client.start()
