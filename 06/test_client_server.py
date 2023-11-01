@@ -108,7 +108,7 @@ def test_server_invalid_url(mocker, capsys):
         "server.Server.get_text_from_html", return_value="Mock"
     )
     count_words_mock = mocker.patch(
-        "server.Server.get_most_common_words", side_effect="Mock"
+        "server.Server.get_most_common_words", return_value="Mock"
     )
 
     recv_data = [url.encode("utf-8") for url in invalid_urls]
