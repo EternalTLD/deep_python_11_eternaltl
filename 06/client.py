@@ -81,5 +81,5 @@ if __name__ == "__main__":
     parser.add_argument("filename", help="File with URLs to send")
     args = parser.parse_args()
 
-    server = Client(args.threads_number, args.filename)
-    server.start()
+    client = Client(args.threads_number, args.filename)
+    client.start()
