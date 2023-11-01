@@ -146,11 +146,9 @@ def test_get_most_common_words():
     server = Server(1, 2)
 
     text = "Test, teStiNg. Testcase // test, test."
-    expected_data = '{"test": 3, "testing": 1}'
     count_words = server.get_most_common_words(text)
-    assert count_words == expected_data
+    assert count_words == '{"test": 3, "testing": 1}'
 
     text = None
-    expected_data = "Data is broken"
     count_words = server.get_most_common_words(text)
-    assert count_words == expected_data
+    assert count_words == "Data is broken"
