@@ -2,6 +2,7 @@ import socket
 import threading
 import queue
 import json
+import argparse
 
 
 class Client:
@@ -15,7 +16,9 @@ class Client:
 
     def start(self):
         threads = [
-            threading.Thread(target=self.send_url_and_receive_data, name=f"Thread - {i+1}")
+            threading.Thread(
+                target=self.send_url_and_receive_data, name=f"Thread - {i+1}"
+            )
             for i in range(self.threads_number)
         ]
 
@@ -39,7 +42,7 @@ class Client:
             if url is None:
                 self.url_queue.put(None)
                 break
-            
+
             client_socket = None
             try:
                 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,8 +51,10 @@ class Client:
 
                 data = json.loads(client_socket.recv(4096).decode("utf-8"))
                 print(f"{url}: {data}")
-            except (socket.error, json.JSONDecodeError) as e:
-                print(f"Error in thread - {threading.current_thread().name}: {e}")
+            except (socket.error, json.JSONDecodeError) as exception:
+                print(
+                    f"Error in thread - {threading.current_thread().name}: {exception}"
+                )
                 continue
             finally:
                 if client_socket:
@@ -69,5 +74,12 @@ class Client:
 
 
 if __name__ == "__main__":
-    client = Client(20, "06/urls.txt")
-    client.start()
+    parser = argparse.ArgumentParser(
+        description="Multi-threaded client for sending urls to the server"
+    )
+    parser.add_argument("threads_number", type=int, help="Number of threads")
+    parser.add_argument("filename", help="File with URLs to send")
+    args = parser.parse_args()
+
+    server = Client(args.threads_number, args.filename)
+    server.start()
