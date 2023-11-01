@@ -12,7 +12,6 @@ class Client:
         self.host = host
         self.port = port
         self.url_queue = queue.Queue()
-        self.disconnect = False
 
     def start(self):
         threads = [
