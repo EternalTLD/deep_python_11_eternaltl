@@ -36,14 +36,49 @@ def test_cache_get_and_set():
     assert cache.get("k2") is None
     assert cache.get("k1") == "val1"
 
+    cache.set("k2", 0)
+
+    assert cache.get("k3") is None
+    assert cache.get("k2") == 0
+    assert cache.get("k1") == "val1" 
+
+    cache.set("k4", [])
+
+    assert cache.get("k3") is None
+    assert cache.get("k2") is None
+    assert cache.get("k1") == "val1" 
+    assert cache.get("k4") == []
+
 
 def test_update_existing_key():
     cache = LRUCache(2)
+    
+    cache.set("k1", "val1")
+    cache.set("k2", "val2")
+    assert cache.get("k1") == "val1"
+    assert cache.get("k2") == "val2"
+
+    cache.set("k1", "new_val1")
+    cache.set("k3", "val3")
+
+    assert cache.get("k1") == "new_val1"
+    assert cache.get("k2") is None
+    assert cache.get("k3") == "val3"
+
+
+def test_limit_equal_1():
+    cache = LRUCache(1)
+
     cache.set("k1", "val1")
     assert cache.get("k1") == "val1"
 
-    cache.set("k1", "new_val1")
-    assert cache.get("k1") == "new_val1"
+    cache.set("k2", 0)
+    assert cache.get("k1") is None
+    assert cache.get("k2") == 0
+
+    cache.set("k1", [1, 2, 3])
+    assert cache.get("k1") == [1, 2, 3]
+    assert cache.get("k2") is None
 
 
 def test_cache_limit_value():

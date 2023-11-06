@@ -16,7 +16,7 @@ class LRUCache:
         self._limit = value
 
     def get(self, key):
-        if self.cache_dict.get(key):
+        if key in self.cache_dict:
             self.cache_dict[key] = self.cache_dict.pop(key)
             return self.cache_dict[key]
         return None
@@ -24,10 +24,7 @@ class LRUCache:
     def set(self, key, value):
         if key in self.cache_dict:
             self.cache_dict.pop(key)
-            self.cache_dict[key] = value
-            return True
-        if len(self.cache_dict) == self.limit:
+        elif len(self.cache_dict) == self.limit:
             key_to_delete = next(iter(self.cache_dict))
             self.cache_dict.pop(key_to_delete)
         self.cache_dict[key] = value
-        return True
