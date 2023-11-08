@@ -1,40 +1,46 @@
 from collections import Counter
 import asyncio
 import re
-import time
+import argparse
 import aiohttp
 from bs4 import BeautifulSoup
 
 
-async def get_text(url: str) -> str | None:
+async def get_html(url: str) -> str:
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             html = await response.text()
-            soup = BeautifulSoup(html, "html.parser")
-            page_text = soup.get_text()
-            return page_text
-        
+    return html
+
+
+def parse_html(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    page_text = soup.get_text()
+    return page_text
+
 
 def get_most_common_words(text: str, most_common: int) -> dict:
     words = re.findall(r"\b[А-Яа-яA-Za-z]+\b", text.lower())
-    most_common_words = Counter(words).most_common(
-        most_common
-    )
-    most_common_words_dict = {}
-    for (word, count) in most_common_words:
-        most_common_words_dict[word] = count
-    return most_common_words_dict
+    most_common_words = Counter(words).most_common(most_common)
+    return dict(most_common_words)
 
 
 async def fetch_workers(que: asyncio.Queue, most_common: int) -> None:
     while True:
         url = await que.get()
-        text = await get_text(url)
-        words = get_most_common_words(text, most_common)
-        print(f"{url}: {words}")
+        try:
+            html = await get_html(url)
+            text = parse_html(html)
+            data = get_most_common_words(text, most_common)
+            print(f"{url}: {data}")
+        except Exception:
+            print(f"{url} is broken")
+            continue
+        finally:
+            que.task_done()
 
 
-async def run_fetcher(workers_number: int, urls: list[str], most_common: int) -> None:
+async def run_fetcher(workers_number: int, filename: str, most_common: int) -> None:
     que = asyncio.Queue()
 
     workers = [
@@ -42,8 +48,9 @@ async def run_fetcher(workers_number: int, urls: list[str], most_common: int) ->
         for _ in range(workers_number)
     ]
 
-    for url in urls:
-        await que.put(url)
+    with open(filename, "r", encoding="utf-8") as file_object:
+        for url in file_object:
+            await que.put(url.strip())
 
     await que.join()
 
@@ -52,13 +59,10 @@ async def run_fetcher(workers_number: int, urls: list[str], most_common: int) ->
 
 
 if __name__ == "__main__":
-    urls = []
-    with open("07/urls.txt", "r", encoding="utf-8") as file_object:
-        for url in file_object:
-            urls.append(url.strip())
-    workers_number = 10
-    most_common = 7
+    parser = argparse.ArgumentParser(description="Async script for processing urls")
+    parser.add_argument("-c", type=int, help="Number of simultaneous requests")
+    parser.add_argument("filename", help="File with urls")
+    parser.add_argument("most_common", type=int, help="Number of most common words")
+    args = parser.parse_args()
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_fetcher(workers_number, urls, most_common))
-    loop.close()
+    asyncio.run(run_fetcher(args.c, args.filename, args.most_common))
