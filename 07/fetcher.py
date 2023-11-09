@@ -33,9 +33,8 @@ async def fetch_workers(que: asyncio.Queue, most_common: int) -> None:
             text = parse_html(html)
             data = get_most_common_words(text, most_common)
             print(f"{url}: {data}")
-        except Exception:
+        except aiohttp.ClientError:
             print(f"{url} is broken")
-            continue
         finally:
             que.task_done()
 

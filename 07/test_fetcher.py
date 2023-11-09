@@ -8,13 +8,12 @@ import fetcher
 
 @pytest.mark.asyncio
 async def test_invalid_url(mocker, capsys):
-    url = "https://somesite.com"
     parse_mock = mocker.patch("fetcher.parse_html", return_value="Some text")
     count_words_mock = mocker.patch(
         "fetcher.get_most_common_words", return_value="{'word1': 2}"
     )
-    client_mock = mocker.patch("aiohttp.ClientSession.get", return_value="Some html")
 
+    url = "https://somesiteurl.com"
     que = asyncio.Queue()
     await que.put(url)
 
@@ -23,17 +22,15 @@ async def test_invalid_url(mocker, capsys):
     task.cancel()
 
     fetcher_print = capsys.readouterr().out.split("\n")
-    expected_print = "https://somesite.com is broken"
+    expected_print = "https://somesiteurl.com is broken"
 
     assert fetcher_print[0] == expected_print
     assert parse_mock.call_count == 0
     assert count_words_mock.call_count == 0
-    assert client_mock.call_count == 1
 
 
 @pytest.mark.asyncio
 async def test_valid_url(mocker, capsys):
-    url = "https://somesite.com"
     parse_mock = mocker.patch("fetcher.parse_html", return_value="Some text")
     count_words_mock = mocker.patch(
         "fetcher.get_most_common_words", return_value="{'word1': 2}"
@@ -42,10 +39,9 @@ async def test_valid_url(mocker, capsys):
     client_mock = aiohttp.ClientSession
     client_mock.get = MagicMock()
     client_mock.get.return_value.__aenter__.return_value.status = 200
-    client_mock.get.return_value.__aenter__.return_value.text.return_value = (
-        "test content"
-    )
+    client_mock.get.return_value.__aenter__.return_value.text.return_value = "Test"
 
+    url = "https://somesite.com"
     que = asyncio.Queue()
     await que.put(url)
 
