@@ -2,64 +2,37 @@ import weakref
 
 
 class TeamInfo:
-    def __init__(self, name, players_number) -> None:
+    def __init__(self, name, city) -> None:
         self.name = name
-        self.players_number = players_number
+        self.city = city
 
 
-class Players:
-    def __init__(self, players) -> None:
-        self.players = players
+class Members:
+    def __init__(self, members) -> None:
+        self.members = members
 
 
 class Team:
-    def __init__(self, info, players) -> None:
+    def __init__(self, info, members, status, sport) -> None:
         self.info = TeamInfo(*info)
-        self.players = Players(players)
-
-    def add_player(self, player):
-        self.players.add(player)
-    
-    def remove_player(self, player):
-        self.players.remove(player)
-
-
-class SlotsTeamInfo:
-    __slots__ = ("name", "players_number")
-
-    def __init__(self, name, players_number) -> None:
-        self.name = name
-        self.players_number = players_number
-
-
-class SlotsPlayers:
-    __slots__ = ("players")
-
-    def __init__(self, players) -> None:
-        self.players = players
+        self.members = Members(members)
+        self.status = status
+        self.sport = sport
 
 
 class SlotsTeam:
-    __slots__ = ("info", "players")
+    __slots__ = ("info", "members", "status", "sport")
 
-    def __init__(self, info, players) -> None:
-        self.info = SlotsTeamInfo(*info)
-        self.players = SlotsPlayers(players)
-
-    def add_player(self, player):
-        self.players.add(player)
-    
-    def remove_player(self, player):
-        self.players.remove(player)
+    def __init__(self, info, members, status, sport) -> None:
+        self.info = TeamInfo(*info)
+        self.members = Members(members)
+        self.status = status
+        self.sport = sport
 
 
 class WeakrefTeam:
-    def __init__(self, info, players) -> None:
+    def __init__(self, info, members, status, sport) -> None:
         self.info = weakref.ref(TeamInfo(*info))
-        self.players = weakref.ref(Players(players))
-    
-    def add_player(self, player):
-        self.players.add(player)
-    
-    def remove_player(self, player):
-        self.players.remove(player)
+        self.members = weakref.ref(Members(members))
+        self.status = status
+        self.sport = sport
