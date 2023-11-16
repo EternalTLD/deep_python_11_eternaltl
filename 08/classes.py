@@ -13,26 +13,20 @@ class Members:
 
 
 class Team:
-    def __init__(self, info, members, status, sport) -> None:
+    def __init__(self, info, members) -> None:
         self.info = TeamInfo(*info)
         self.members = Members(members)
-        self.status = status
-        self.sport = sport
 
 
 class SlotsTeam:
-    __slots__ = ("info", "members", "status", "sport")
+    __slots__ = ("info", "members")
 
-    def __init__(self, info, members, status, sport) -> None:
+    def __init__(self, info, members) -> None:
         self.info = TeamInfo(*info)
         self.members = Members(members)
-        self.status = status
-        self.sport = sport
 
 
 class WeakrefTeam:
-    def __init__(self, info, members, status, sport) -> None:
+    def __init__(self, info, members) -> None:
         self.info = weakref.ref(TeamInfo(*info))
         self.members = weakref.ref(Members(members))
-        self.status = status
-        self.sport = sport
