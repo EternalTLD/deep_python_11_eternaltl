@@ -8,10 +8,7 @@ from profile_deco import ProfileDeco
 @ProfileDeco
 def measure_time(cls, n_instances):
     start_time = time()
-    instances = [
-        cls(("SomeTeam", "SPB"), {1, 2, 3})
-        for _ in range(n_instances)
-    ]
+    instances = [cls(("SomeTeam", "SPB"), {1, 2, 3}) for _ in range(n_instances)]
     print(f"Creation time of {cls.__name__} - {time()-start_time:.3f}")
 
     start_time = time()
