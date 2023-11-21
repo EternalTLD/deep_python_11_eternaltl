@@ -90,21 +90,9 @@ def test_cache_limit_value():
         assert LRUCache(-999)
     assert "Cache limit must be greater then 0" in str(exception.value)
 
-    cache = LRUCache(2)
-    with pytest.raises(ValueError) as exception:
-        cache.limit = -1
-    assert "Cache limit must be greater then 0" in str(exception.value)
-    assert cache.limit == 2
-
 
 @pytest.mark.parametrize("limit", ["1", 0.1, [1, 2, 3], (1, 2, 3), {"1": 1}, None])
 def test_cache_limit_type(limit):
     with pytest.raises(TypeError) as exception:
         assert LRUCache(limit)
     assert "Cache limit must be int" in str(exception.value)
-
-    cache = LRUCache(2)
-    with pytest.raises(TypeError) as exception:
-        cache.limit = limit
-    assert "Cache limit must be int" in str(exception.value)
-    assert cache.limit == 2

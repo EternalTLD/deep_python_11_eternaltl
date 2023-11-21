@@ -1,19 +1,11 @@
 class LRUCache:
     def __init__(self, limit=42):
+        if not isinstance(limit, int):
+            raise TypeError("Cache limit must be int")
+        if limit <= 0:
+            raise ValueError("Cache limit must be greater then 0")
         self.limit = limit
         self.cache_dict = {}
-
-    @property
-    def limit(self):
-        return self._limit
-
-    @limit.setter
-    def limit(self, value):
-        if not isinstance(value, int):
-            raise TypeError("Cache limit must be int")
-        if value <= 0:
-            raise ValueError("Cache limit must be greater then 0")
-        self._limit = value
 
     def get(self, key):
         if key in self.cache_dict:
