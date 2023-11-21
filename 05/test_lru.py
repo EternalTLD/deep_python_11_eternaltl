@@ -40,19 +40,19 @@ def test_cache_get_and_set():
 
     assert cache.get("k3") is None
     assert cache.get("k2") == 0
-    assert cache.get("k1") == "val1" 
+    assert cache.get("k1") == "val1"
 
     cache.set("k4", [])
 
     assert cache.get("k3") is None
     assert cache.get("k2") is None
-    assert cache.get("k1") == "val1" 
+    assert cache.get("k1") == "val1"
     assert cache.get("k4") == []
 
 
 def test_update_existing_key():
     cache = LRUCache(2)
-    
+
     cache.set("k1", "val1")
     cache.set("k2", "val2")
     assert cache.get("k1") == "val1"
