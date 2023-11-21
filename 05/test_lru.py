@@ -66,11 +66,12 @@ def test_update_existing_key():
     assert cache.get("k3") == "val3"
 
 
-def test_limit_equal_1():
+def test_limit_equal_one():
     cache = LRUCache(1)
 
     cache.set("k1", "val1")
     assert cache.get("k1") == "val1"
+    assert cache.get("k2") is None
 
     cache.set("k2", 0)
     assert cache.get("k1") is None
