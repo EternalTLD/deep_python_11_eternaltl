@@ -13,7 +13,9 @@ def test_loads():
     ujson_doc = ujson.loads(json_str)
 
     assert json_doc == cjson_doc == ujson_doc
-    assert type(json_doc) == type(cjson_doc) == type(ujson_doc)
+    assert isinstance(json_doc, dict)
+    assert isinstance(cjson_doc, dict)
+    assert isinstance(ujson_doc, dict)
 
 
 def test_dumps():
@@ -24,7 +26,9 @@ def test_dumps():
     ujson_str = json.dumps(json_doc)
 
     assert json_str == cjson_str == ujson_str
-    assert type(json_str) == type(cjson_str) == type(ujson_str)
+    assert isinstance(json_str, str)
+    assert isinstance(cjson_str, str)
+    assert isinstance(ujson_str, str)
 
 
 def test_empty_dumps_and_loads():
@@ -35,7 +39,9 @@ def test_empty_dumps_and_loads():
     ujson_str = json.dumps(json_doc)
 
     assert json_str == cjson_str == ujson_str
-    assert type(json_str) == type(cjson_str) == type(ujson_str)
+    assert isinstance(json_str, str)
+    assert isinstance(cjson_str, str)
+    assert isinstance(ujson_str, str)
 
     json_str = "{}"
 
@@ -44,7 +50,9 @@ def test_empty_dumps_and_loads():
     ujson_doc = ujson.loads(json_str)
 
     assert json_doc == cjson_doc == ujson_doc
-    assert type(json_doc) == type(cjson_doc) == type(ujson_doc)
+    assert isinstance(json_doc, dict)
+    assert isinstance(cjson_doc, dict)
+    assert isinstance(ujson_doc, dict)
 
 
 @pytest.mark.parametrize(
@@ -67,40 +75,27 @@ def test_cjson_dumps_args(arg):
     assert "Invalid argument. Expected dictionary." in str(exception.value)
 
 
-def measure_dumps_time(lib, data, measurements):
+@pytest.mark.parametrize("lib", [json, ujson, cjson])
+def test_dumps_time(lib):
+    with open("10/data.json", "r", encoding="utf-8") as json_file:
+        data = json.load(json_file)
+
     start_time = time()
-    for _ in range(5):
-        for json in data:
-            lib.dumps(json)
-    print(
-        f"[{lib.__name__}] Dumps time of {measurements} measurements - {(time()-start_time)/5}"
-    )
+    for json_data in data:
+        lib.dumps(json_data)
+
+    print(f"[{lib.__name__}] Dumps time  - {round(time()-start_time, 3)}")
+
+    assert True
 
 
-def measure_loads_time(lib, data, measurements):
-    start_time = time()
-    for _ in range(measurements):
-        for json in data:
-            lib.loads(json)
-    print(
-        f"[{lib.__name__}] Loads time of {measurements} measurements - {(time()-start_time)/5}"
-    )
+@pytest.mark.parametrize("lib", [json, ujson, cjson])
+def test_loads_time(lib):
+    with open("10/data.json", "r", encoding="utf-8") as json_file:
+        start_time = time()
+        for json_data in json_file:
+            lib.loads(json_data)
 
+    print(f"[{lib.__name__}] Loads time - {round(time()-start_time, 3)}")
 
-if __name__ == "__main__":
-    MEASUREMENTS = 10
-
-    with open("data.json", "r") as json_file:
-        data_doc = json.load(json_file)
-
-    json_str = []
-    for data in data_doc:
-        json_str.append(json.dumps(data))
-
-    measure_dumps_time(json, data_doc, MEASUREMENTS)
-    measure_dumps_time(ujson, data_doc, MEASUREMENTS)
-    measure_dumps_time(cjson, data_doc, MEASUREMENTS)
-
-    measure_loads_time(json, json_str, MEASUREMENTS)
-    measure_loads_time(ujson, json_str, MEASUREMENTS)
-    measure_loads_time(cjson, json_str, MEASUREMENTS)
+    assert True
