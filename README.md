@@ -143,3 +143,14 @@
     </div>
 </header>
 </body>
+
+<body class="indexfile">
+<header>
+    <div class="content">
+        <h1>10 | C-Extension:</h1>
+        <h3>Сравнение производительности библиотек json, ujson и cjson.</h3>
+        <img src="10/comparison.png">
+        <p>Метод dumps в библиотеке cjson отрабатывает медленнее, чем в ujson, но быстрее чем в json. Метод loads в cjson показал самую высокую производительность среди всех библиотек.</p>
+    </div>
+</header>
+</body>

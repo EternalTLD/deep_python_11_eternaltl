@@ -1,4 +1,3 @@
-from time import time
 import json
 import ujson
 import cjson
@@ -73,29 +72,3 @@ def test_cjson_dumps_args(arg):
         cjson.dumps(arg)
 
     assert "Invalid argument. Expected dictionary." in str(exception.value)
-
-
-@pytest.mark.parametrize("lib", [json, ujson, cjson])
-def test_dumps_time(lib):
-    with open("10/data.json", "r", encoding="utf-8") as json_file:
-        data = json.load(json_file)
-
-    start_time = time()
-    for json_data in data:
-        lib.dumps(json_data)
-
-    print(f"[{lib.__name__}] Dumps time  - {round(time()-start_time, 3)}")
-
-    assert True
-
-
-@pytest.mark.parametrize("lib", [json, ujson, cjson])
-def test_loads_time(lib):
-    with open("10/data.json", "r", encoding="utf-8") as json_file:
-        start_time = time()
-        for json_data in json_file:
-            lib.loads(json_data)
-
-    print(f"[{lib.__name__}] Loads time - {round(time()-start_time, 3)}")
-
-    assert True
